@@ -1,7 +1,7 @@
 // Données des dictées
 const DICTEES_DATA = {
     1: {
-        titre: "Dictée 1",
+        titre: "roi de la forêt",
         jaune: ["maison1", "jardin2", "école3", "livre4", "stylo5"],
         vert: ["maison6", "jardin7", "école8", "livre9", "stylo10", "cahier11"],
         violet: ["maison12", "jardin13", "école14", "livre15", "stylo16", "cahier17", "table18"]
