@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Application de révision de mots de dictée CE2 avec méthode Leitner">
+    <meta name="theme-color" content="#FF6B35">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Dictée CE2">
+    <title>J'apprends mes mots de dictée en CE2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="stars" id="starsContainer"></div>
+
+    <!-- Page de connexion -->
+    <div id="loginPage" class="login-page">
+        <div class="login-card">
+            <h1 class="login-title">J'apprends mes mots de dictée en CE2</h1>
+            <p class="login-subtitle">📚 Révise tes mots avec la méthode Leitner</p>
+            
+            <div id="userListContainer" class="user-list"></div>
+
+            <div id="newUserForm">
+                <div class="input-group">
+                    <label>Ton prénom</label>
+                    <input type="text" id="newUsername" placeholder="Entre ton prénom">
+                </div>
+                <div class="input-group">
+                    <label>Mot de passe (pour protéger ta session)</label>
+                    <input type="password" id="newPassword" placeholder="Choisis un mot de passe">
+                </div>
+                <button class="btn" onclick="createUser()">Créer mon espace</button>
+                
+                <div style="margin-top: 30px; padding-top: 30px; border-top: 2px solid var(--info);">
+                    <button class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);" onclick="showTeacherLogin()">
+                        👨‍🏫 Espace enseignant
+                    </button>
+                </div>
+            </div>
+
+            <div id="loginForm" class="hidden">
+                <div class="input-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="loginPassword" placeholder="Entre ton mot de passe">
+                </div>
+                <button class="btn" onclick="loginUser()">Se connecter</button>
+                <button class="btn btn-secondary" onclick="cancelLogin()">Annuler</button>
+            </div>
+
+            <div id="teacherLoginForm" class="hidden">
+                <div class="input-group">
+                    <label>Mot de passe enseignant</label>
+                    <input type="password" id="teacherPassword" placeholder="Mot de passe enseignant">
+                </div>
+                <button class="btn" onclick="loginTeacher()">Accéder à l'espace enseignant</button>
+                <button class="btn btn-secondary" onclick="cancelTeacherLogin()">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page principale -->
+    <div id="mainPage" class="main-page hidden">
+        <div class="container">
+            <div class="header">
+                <h1 class="header-title">Mes mots de dictée</h1>
+                <div class="header-user">
+                    <span id="currentUserName"></span>
+                    <button class="btn btn-back" onclick="logout()">Retour</button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('boxes')">Mes boîtes de révision</div>
+                <div class="tab" onclick="switchTab('progress')">Ma progression</div>
+                <div class="tab" onclick="switchTab('selection')">Ajouter des listes</div>
+            </div>
+
+            <!-- Onglet Boîtes -->
+            <div id="boxesTab" class="tab-content active">
+                <div class="boxes-container">
+                    <div class="leitner-box box1" onclick="showBoxWords(1)">
+                        <div class="box-header">
+                            <div class="box-title">Boîte 1</div>
+                            <div class="box-count" id="box1Count">0</div>
+                        </div>
+                        <div class="box-schedule">📅 Tous les jours</div>
+                        <div class="box-words" id="box1Preview"></div>
+                        <button class="btn btn-practice" onclick="startPractice(1)">Réviser</button>
+                    </div>
+
+                    <div class="leitner-box box2" onclick="showBoxWords(2)">
+                        <div class="box-header">
+                            <div class="box-title">Boîte 2</div>
+                            <div class="box-count" id="box2Count">0</div>
+                        </div>
+                        <div class="box-schedule">📅 Mardi, Jeudi, Samedi</div>
+                        <div class="box-words" id="box2Preview"></div>
+                        <button class="btn btn-practice" onclick="startPractice(2)">Réviser</button>
+                    </div>
+
+                    <div class="leitner-box box3" onclick="showBoxWords(3)">
+                        <div class="box-header">
+                            <div class="box-title">Boîte 3</div>
+                            <div class="box-count" id="box3Count">0</div>
+                        </div>
+                        <div class="box-schedule">📅 Mercredi, Dimanche</div>
+                        <div class="box-words" id="box3Preview"></div>
+                        <button class="btn btn-practice" onclick="startPractice(3)">Réviser</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet Progression -->
+            <div id="progressTab" class="tab-content">
+                <div class="progress-container">
+                    <h2 class="progress-title">Ma progression par dictée</h2>
+                    <div id="progressList"></div>
+                </div>
+            </div>
+
+            <!-- Onglet Sélection -->
+            <div id="selectionTab" class="tab-content">
+                <h2 class="progress-title">Sélectionne tes listes de mots</h2>
+                <div class="dictee-grid" id="dicteeGrid"></div>
+                <button class="btn btn-add-selected" onclick="addSelectedLists()">Ajouter les listes sélectionnées</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page espace enseignant -->
+    <div id="teacherPage" class="main-page hidden">
+        <div class="container">
+            <div class="header">
+                <h1 class="header-title">👨‍🏫 Espace enseignant</h1>
+                <div class="header-user">
+                    <button class="btn btn-back" onclick="logoutTeacher()">Retour</button>
+                </div>
+            </div>
+
+            <div class="teacher-panel">
+                <div class="teacher-header">
+                    <h2 class="progress-title" style="margin: 0;">Personnalisation des listes de mots</h2>
+                    <button class="btn" onclick="saveAndExportHTML()">💾 Enregistrer et télécharger HTML</button>
+                </div>
+                <p style="color: var(--text-light); margin-bottom: 20px;">
+                    Modifiez les mots de chaque dictée selon les besoins de votre classe. Entrez les mots séparés par des virgules.
+                </p>
+                <div id="teacherEditor"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page de révision -->
+    <div id="practicePage" class="practice-page hidden">
+        <div class="practice-header">
+            <h2 style="font-family: 'Fredoka', sans-serif; font-size: 2rem; margin-bottom: 10px;">
+                Révision - Boîte <span id="practiceBoxNumber"></span>
+            </h2>
+            <div class="practice-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="practiceCorrect">0</div>
+                    <div class="stat-label">Réussies</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="practiceTotal">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="practice-container">
+            <div class="practice-input-section">
+                <div class="word-number" id="wordNumber"></div>
+                <button class="listen-btn" onclick="speakWord()">🔊 Écouter le mot</button>
+                
+                <input type="text" class="answer-input" id="answerInput" placeholder="Écris le mot ici..." autocomplete="off">
+                
+                <div class="virtual-keyboard">
+                    <div class="keyboard-row">
+                        <div class="key" onclick="typeKey('a')">A</div>
+                        <div class="key" onclick="typeKey('z')">Z</div>
+                        <div class="key" onclick="typeKey('e')">E</div>
+                        <div class="key" onclick="typeKey('r')">R</div>
+                        <div class="key" onclick="typeKey('t')">T</div>
+                        <div class="key" onclick="typeKey('y')">Y</div>
+                        <div class="key" onclick="typeKey('u')">U</div>
+                        <div class="key" onclick="typeKey('i')">I</div>
+                        <div class="key" onclick="typeKey('o')">O</div>
+                        <div class="key" onclick="typeKey('p')">P</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div class="key" onclick="typeKey('q')">Q</div>
+                        <div class="key" onclick="typeKey('s')">S</div>
+                        <div class="key" onclick="typeKey('d')">D</div>
+                        <div class="key" onclick="typeKey('f')">F</div>
+                        <div class="key" onclick="typeKey('g')">G</div>
+                        <div class="key" onclick="typeKey('h')">H</div>
+                        <div class="key" onclick="typeKey('j')">J</div>
+                        <div class="key" onclick="typeKey('k')">K</div>
+                        <div class="key" onclick="typeKey('l')">L</div>
+                        <div class="key" onclick="typeKey('m')">M</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div class="key" onclick="typeKey('w')">W</div>
+                        <div class="key" onclick="typeKey('x')">X</div>
+                        <div class="key" onclick="typeKey('c')">C</div>
+                        <div class="key" onclick="typeKey('v')">V</div>
+                        <div class="key" onclick="typeKey('b')">B</div>
+                        <div class="key" onclick="typeKey('n')">N</div>
+                        <div class="key" onclick="typeKey('à')">À</div>
+                        <div class="key" onclick="typeKey('é')">É</div>
+                        <div class="key" onclick="typeKey('è')">È</div>
+                        <div class="key" onclick="typeKey('ê')">Ê</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div class="key" onclick="typeKey('ç')">Ç</div>
+                        <div class="key" onclick="typeKey('ù')">Ù</div>
+                        <div class="key" onclick="typeKey('ô')">Ô</div>
+                        <div class="key" onclick="typeKey('î')">Î</div>
+                        <div class="key" onclick="typeKey('â')">Â</div>
+                        <div class="key space" onclick="typeKey(' ')">Espace</div>
+                        <div class="key" onclick="typeKey('-')">-</div>
+                        <div class="key" onclick="typeKey('\'')">\'</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div class="key backspace" onclick="typeBackspace()">⌫ Effacer</div>
+                    </div>
+                </div>
+
+                <div class="validation-btns">
+                    <button class="btn btn-validate" onclick="validateAnswer()">Valider ma réponse</button>
+                    <button class="btn btn-back" onclick="endPractice()">Terminer</button>
+                </div>
+            </div>
+
+            <div class="practice-feedback-section" id="feedbackContainer">
+                <div style="text-align: center; color: var(--text-light);">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">💡</div>
+                    <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 10px;">Conseil</p>
+                    <p style="font-size: 1rem;">Écoute bien le mot et écris-le lettre par lettre.</p>
+                    <p style="font-size: 0.9rem; margin-top: 15px; opacity: 0.8;">Le feedback s'affichera ici après validation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "J'apprends mes mots de dictée en CE2",
+  "short_name": "Dictée CE2",
+  "description": "Application de révision de mots de dictée avec méthode Leitner",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF8F0",
+  "theme_color": "#FF6B35",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "kids"],
+  "lang": "fr",
+  "dir": "ltr"
+}
